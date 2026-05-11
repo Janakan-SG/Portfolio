@@ -1,6 +1,11 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Mail, MapPin, Globe, Loader2 } from "lucide-react";
+import emailjs from "@emailjs/browser";
+
+const SERVICE_ID  = "portfolio_service";
+const TEMPLATE_ID = "template_9fjlyx6";
+const PUBLIC_KEY  = "NUFEUHanQ8OENNvN5";
 
 export function Contact() {
   const [values, setValues] = useState({
@@ -34,12 +39,16 @@ export function Contact() {
     }
     setPending(true);
     try {
-      const res = await fetch("/api/contact", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(values),
-      });
-      if (!res.ok) throw new Error("Server error");
+      await emailjs.send(
+        SERVICE_ID,
+        TEMPLATE_ID,
+        {
+          from_name: values.name,
+          from_email: values.email,
+          message: values.message,
+        },
+        PUBLIC_KEY
+      );
       setSuccess(true);
       setValues({ name: "", email: "", message: "" });
       setErrors({});
